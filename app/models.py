@@ -7,18 +7,22 @@ class Automobile(Base):
     __tablename__ = "automobiles"
 
     id = Column(Integer, primary_key=True)
-    license_plate = Column(String, unique=True, nullable=False) 
-    make = Column(String)                       
-    capacity = Column(Float)                    
-    fuel_consumption = Column(Float)            
+    license_plate = Column(String, unique=True, nullable=False)
+    make = Column(String)
+    capacity = Column(Float)
+    fuel_consumption = Column(Float)
+    
+    trips = relationship("Trip", back_populates="automobile")
 
 class Driver(Base):
     __tablename__ = "drivers"
 
     id = Column(Integer, primary_key=True)
     personnel_number = Column(String, unique=True, nullable=False)
-    name = Column(String, nullable=False)                          
-    category = Column(String)                      
+    name = Column(String, nullable=False)
+    category = Column(String)
+
+    trips = relationship("Trip", back_populates="driver")
 
 class Trip(Base):
     __tablename__ = "trips"
@@ -33,5 +37,5 @@ class Trip(Base):
     driver_id = Column(Integer, ForeignKey("drivers.id"))
     auto_id = Column(Integer, ForeignKey("automobiles.id"))
     
-    driver = relationship("Driver", backref="trips")
-    auto = relationship("Automobile", backref="trips")
+    driver = relationship("Driver", back_populates="trips")
+    automobile = relationship("Automobile", back_populates="trips")

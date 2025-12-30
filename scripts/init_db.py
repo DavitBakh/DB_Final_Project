@@ -15,7 +15,7 @@ async def init_db():
     host='localhost',
     port=5432,
     database='postgres'
-)
+    )
 
     
     try:
