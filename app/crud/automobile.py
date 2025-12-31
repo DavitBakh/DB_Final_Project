@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, update
 
 from db.models import Automobile
 
@@ -18,6 +18,15 @@ async def get_automobile_by_plate(session: AsyncSession, plate: str) -> Automobi
         .where(Automobile.license_plate == plate))
         
     return result.scalar_one_or_none()
+
+async def get_automobile(db: AsyncSession, id: int):
+    result = await db.execute(select(Automobile).where(Automobile.id == id))
+    return result.scalar_one_or_none()
+
+async def update_automobile(db: AsyncSession, id: int, obj_in):
+    await db.execute(update(Automobile).where(Automobile.id == id).values(**obj_in.dict(exclude_unset=True)))
+    await db.commit()
+    return await get_automobile(db, id)
 
 
 async def delete_automobile(session: AsyncSession, auto_id: int) -> bool:

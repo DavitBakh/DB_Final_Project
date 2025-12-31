@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class AutomobileBase(BaseModel):
@@ -10,6 +11,11 @@ class AutomobileBase(BaseModel):
 
 class AutomobileCreate(AutomobileBase):
     pass
+
+class AutomobileUpdate(BaseModel):
+    make: Optional[str] = None
+    capacity: Optional[float] = None
+    fuel_consumption: Optional[float] = None
 
 
 class AutomobileOut(AutomobileBase):
