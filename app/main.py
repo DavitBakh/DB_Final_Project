@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
-from app.api.driver import router as driver_router
-from app.api.automobile import router as automobile_router
-from app.api.trip import router as trip_router
+from api.driver import router as driver_router
+from api.automobile import router as automobile_router
+from api.trip import router as trip_router
 
 app = FastAPI(title="Trucking API")
 

@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 
-from app.db.models import Automobile
+from db.models import Automobile
 
 
 async def create_automobile(session: AsyncSession, license_plate: str, make: str, capacity: float, fuel_consumption: float) -> Automobile:
@@ -26,6 +26,6 @@ async def delete_automobile(session: AsyncSession, auto_id: int) -> bool:
         .where(Automobile.id == auto_id)
         .returning(Automobile.id)
     )
-    
+
     await session.commit()
     return result.scalar() is not None

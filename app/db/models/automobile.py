@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float
-from app.db.base import Base
+from db.base import Base
 from sqlalchemy.orm import relationship
 
 class Automobile(Base):

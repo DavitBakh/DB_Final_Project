@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.session import get_session
-from app.schemas.driver import DriverCreate, DriverOut, DriverUpdate
-from app.crud.driver import (
+from db.session import get_session
+from schemas.driver import DriverCreate, DriverOut, DriverUpdate
+from crud.driver import (
     create_driver,
     get_driver_by_id,
     get_all_drivers,
@@ -45,7 +45,7 @@ async def update(driver_id: int, data: DriverUpdate, session: AsyncSession = Dep
 @router.delete("/{driver_id}")
 async def delete(driver_id: int, session: AsyncSession = Depends(get_session)):
     deleted = await delete_driver(session, driver_id)
-    
+
     if not deleted:
         raise HTTPException(404, "Driver not found")
     return {"status": "deleted"}

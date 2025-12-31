@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete
 
-from app.db.models import Driver
+from db.models import Driver
 
 
 async def create_driver(session: AsyncSession, personnel_number: str, name: str, category: str | None = None) -> Driver:

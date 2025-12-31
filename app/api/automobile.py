@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.session import get_session
-from app.schemas.automobile import AutomobileCreate, AutomobileOut
-from app.crud.automobile import (
+from db.session import get_session
+from schemas.automobile import AutomobileCreate, AutomobileOut
+from crud.automobile import (
     create_automobile,
     get_automobile_by_plate,
     delete_automobile,
@@ -29,7 +29,7 @@ async def get_by_plate(plate: str, session: AsyncSession = Depends(get_session))
 @router.delete("/{auto_id}")
 async def delete(auto_id: int, session: AsyncSession = Depends(get_session)):
     deleted = await delete_automobile(session, auto_id)
-    
+
     if not deleted:
         raise HTTPException(404, "Automobile not found")
     return {"status": "deleted"}

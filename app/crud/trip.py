@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from app.db.models import Trip
+from db.models import Trip
 
 
 async def create_trip(session: AsyncSession, driver_id: int, auto_id: int, origin: str, destination: str, departure_date: datetime, distance: float) -> Trip:

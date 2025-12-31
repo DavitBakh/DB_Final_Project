@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.session import get_session
-from app.schemas.trip import TripCreate, TripOut
-from app.crud.trip import create_trip, get_trips_by_driver
+from db.session import get_session
+from schemas.trip import TripCreate, TripOut
+from crud.trip import create_trip, get_trips_by_driver
 
 router = APIRouter(prefix="/trips", tags=["Trips"])
 
