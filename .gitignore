@@ -10,6 +10,9 @@ venv/
 .env/
 .envrc
 
+# ===== Environment variables =====
+.env
+
 # ===== Alembic =====
 alembic/versions/*.pyc
 
