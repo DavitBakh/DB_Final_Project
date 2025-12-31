@@ -23,8 +23,8 @@ async def create(data: DriverCreate, session: AsyncSession = Depends(get_session
 
 
 @router.get("/", response_model=list[DriverOut])
-async def get_all(session: AsyncSession = Depends(get_session)):
-    return await get_all_drivers(session)
+async def get_all(skip: int = 0, limit: int = 100, session: AsyncSession = Depends(get_session)):
+    return await get_all_drivers(session, skip, limit)
 
 
 @router.get("/{driver_id}", response_model=DriverOut)
@@ -36,7 +36,7 @@ async def get_by_id(driver_id: int, session: AsyncSession = Depends(get_session)
     return driver
 
 @router.get("/stats/distance-by-driver")
-async def distance_by_driver(db: AsyncSession = Depends(get_session)):
+async def distance_by_driver(skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_session)):
     stmt = (
         select(
             Driver.name,
@@ -44,6 +44,8 @@ async def distance_by_driver(db: AsyncSession = Depends(get_session)):
         )
         .join(Trip, Trip.driver_id == Driver.id)
         .group_by(Driver.name)
+        .offset(skip)
+        .limit(limit)
     )
 
     result = await db.execute(stmt)

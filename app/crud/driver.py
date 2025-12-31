@@ -20,9 +20,9 @@ async def get_driver_by_id(session: AsyncSession, driver_id: int) -> Driver | No
     return result.scalar_one_or_none()
 
 
-async def get_all_drivers(session: AsyncSession) -> list[Driver]:
+async def get_all_drivers(session: AsyncSession, skip: int = 0, limit: int = 100) -> list[Driver]:
     result = await session.execute(
-        select(Driver))
+        select(Driver).offset(skip).limit(limit))
     
     return result.scalars().all()
 

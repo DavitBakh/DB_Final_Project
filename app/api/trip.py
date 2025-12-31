@@ -19,8 +19,8 @@ async def create(data: TripCreate, session: AsyncSession = Depends(get_session))
 
 
 @router.get("/driver/{driver_id}", response_model=list[TripOut])
-async def get_by_driver(driver_id: int, session: AsyncSession = Depends(get_session)):
-    return await get_trips_by_driver(session, driver_id)
+async def get_by_driver(driver_id: int, skip: int = 0, limit: int = 100, session: AsyncSession = Depends(get_session)):
+    return await get_trips_by_driver(session, driver_id, skip, limit)
 
 @router.get("/{id}", response_model=TripOut)
 async def api_get_trip(id: int, db: AsyncSession = Depends(get_session)):
@@ -56,7 +56,7 @@ async def filter_trips(
 
 
 @router.get("/trips/with-details")
-async def trips_with_details(db: AsyncSession = Depends(get_session)):
+async def trips_with_details(skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_session)):
     stmt = (
         select(
             Trip.id,
@@ -66,6 +66,8 @@ async def trips_with_details(db: AsyncSession = Depends(get_session)):
         )
         .join(Driver, Trip.driver_id == Driver.id)
         .join(Automobile, Trip.auto_id == Automobile.id)
+        .offset(skip)
+        .limit(limit)
     )
 
     result = await db.execute(stmt)

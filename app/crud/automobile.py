@@ -12,6 +12,21 @@ async def create_automobile(session: AsyncSession, license_plate: str, make: str
     return auto
 
 
+async def get_by_id(session: AsyncSession, auto_id: int) -> Automobile | None:
+    result = await session.execute(
+        select(Automobile)
+        .where(Automobile.id == auto_id))
+    
+    return result.scalar_one_or_none()
+
+
+async def get_all_automobiles(session: AsyncSession, skip: int = 0, limit: int = 100) -> list[Automobile]:
+    result = await session.execute(
+        select(Automobile).offset(skip).limit(limit))
+    
+    return result.scalars().all()
+
+
 async def get_automobile_by_plate(session: AsyncSession, plate: str) -> Automobile | None:
     result = await session.execute(
         select(Automobile)

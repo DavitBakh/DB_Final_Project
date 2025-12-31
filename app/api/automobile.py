@@ -8,9 +8,11 @@ from db.session import get_session
 from schemas.automobile import AutomobileCreate, AutomobileOut, AutomobileUpdate
 from crud.automobile import (
     create_automobile,
+    get_all_automobiles,
     get_automobile_by_plate,
     delete_automobile,
     update_automobile,
+    get_by_id,
 )
 
 router = APIRouter(prefix="/automobiles", tags=["Automobiles"])
@@ -49,9 +51,8 @@ async def create(data: AutomobileCreate, session: AsyncSession = Depends(get_ses
     return await create_automobile(session, **data.model_dump())
 
 @router.get("/", response_model=list[AutomobileOut])
-async def get_all(session: AsyncSession = Depends(get_session)):
-    result = await session.execute(select(Automobile))
-    return result.scalars().all()
+async def get_all(skip: int = 0, limit: int = 100, session: AsyncSession = Depends(get_session)):
+    return await get_all_automobiles(session, skip, limit)
 
 @router.get("/{plate}", response_model=AutomobileOut)
 async def get_by_plate(plate: str, session: AsyncSession = Depends(get_session)):
@@ -61,7 +62,12 @@ async def get_by_plate(plate: str, session: AsyncSession = Depends(get_session))
         raise HTTPException(404, "Automobile not found")
     return auto
 
-
+@router.get("/id/{id}", response_model=AutomobileOut)
+async def get_by_id(id: int, db: AsyncSession = Depends(get_session)):
+    obj = await get_by_id(db, id=id)
+    if not obj:
+        raise HTTPException(status_code=404, detail="Automobile not found")
+    return obj
 
 
 @router.put("/{id}", response_model=AutomobileOut)

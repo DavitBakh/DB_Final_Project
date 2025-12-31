@@ -25,9 +25,9 @@ async def update_trip(db: AsyncSession, id: int, obj_in):
     await db.commit()
     return await get_trip(db, id)
 
-async def get_trips_by_driver(session: AsyncSession, driver_id: int) -> list[Trip]:
+async def get_trips_by_driver(session: AsyncSession, driver_id: int, skip: int = 0, limit: int = 100) -> list[Trip]:
     result = await session.execute(
-        select(Trip).where(Trip.driver_id == driver_id))
+        select(Trip).where(Trip.driver_id == driver_id).offset(skip).limit(limit))
 
     return result.scalars().all()
 
