@@ -20,6 +20,7 @@ class TripUpdate(BaseModel):
     destination: Optional[str] = None
     driver_id: Optional[int] = None
     auto_id: Optional[int] = None
+    status: Optional[str] = None
 
 class TripOut(TripCreate):
     id: int

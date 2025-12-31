@@ -11,6 +11,7 @@ class Trip(Base):
     distance = Column(Float)
     origin = Column(String, nullable=False)
     destination = Column(String)
+    status = Column(String, default="planned") #planned, in_progress, completed
     
     driver_id = Column(Integer, ForeignKey("drivers.id"))
     auto_id = Column(Integer, ForeignKey("automobiles.id"))

@@ -16,6 +16,8 @@ class AutomobileUpdate(BaseModel):
     make: Optional[str] = None
     capacity: Optional[float] = None
     fuel_consumption: Optional[float] = None
+    year: Optional[int] = None
+    is_active: Optional[int] = None
 
 
 class AutomobileOut(AutomobileBase):
