@@ -6,7 +6,7 @@ class Automobile(Base):
     __tablename__ = "automobiles"
 
     id = Column(Integer, primary_key=True)
-    license_plate = Column(String, unique=True, nullable=False)
+    license_plate = Column(String, unique=True, nullable=False, index=True)
     make = Column(String)
     capacity = Column(Float)
     fuel_consumption = Column(Float)
