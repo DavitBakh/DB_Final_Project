@@ -4,8 +4,8 @@ from sqlalchemy import select, delete, update
 from db.models import Automobile
 
 
-async def create_automobile(session: AsyncSession, license_plate: str, make: str, capacity: float, fuel_consumption: float) -> Automobile:
-    auto = Automobile(license_plate=license_plate, make=make, capacity=capacity, fuel_consumption=fuel_consumption)
+async def create_automobile(session: AsyncSession, license_plate: str, make: str, capacity: float, fuel_consumption: float, meta_data: dict | None = None) -> Automobile:
+    auto = Automobile(license_plate=license_plate, make=make, capacity=capacity, fuel_consumption=fuel_consumption, meta_data=meta_data)
     session.add(auto)
     await session.commit()
     await session.refresh(auto)

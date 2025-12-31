@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Dict, Optional, Any
 
 
 class AutomobileBase(BaseModel):
@@ -7,6 +7,7 @@ class AutomobileBase(BaseModel):
     make: str
     capacity: float
     fuel_consumption: float
+    meta_data: Optional[Dict[str, Any]] = None
 
 
 class AutomobileCreate(AutomobileBase):
@@ -18,6 +19,7 @@ class AutomobileUpdate(BaseModel):
     fuel_consumption: Optional[float] = None
     year: Optional[int] = None
     is_active: Optional[int] = None
+    meta_data: Optional[Dict[str, Any]] = None
 
 
 class AutomobileOut(AutomobileBase):
