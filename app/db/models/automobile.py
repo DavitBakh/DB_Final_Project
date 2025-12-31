@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy.dialects.postgresql import JSONB
 from db.base import Base
 from sqlalchemy.orm import relationship
 
@@ -12,5 +13,6 @@ class Automobile(Base):
     fuel_consumption = Column(Float)
     year = Column(Integer, nullable=True)
     is_active = Column(Integer, default=1)
+    meta_data = Column(JSONB, nullable=True)
     
     trips = relationship("Trip", back_populates="automobile")
