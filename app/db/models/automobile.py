@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.dialects.postgresql import JSONB
-from db.base import Base
+from app.db.base import Base
 from sqlalchemy.orm import relationship
 
 class Automobile(Base):
