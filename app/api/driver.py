@@ -10,7 +10,7 @@ from crud.driver import (
     create_driver,
     get_driver_by_id,
     get_all_drivers,
-    update_driver_name,
+    update_driver,
     delete_driver,
 )
 
@@ -55,7 +55,7 @@ async def distance_by_driver(skip: int = 0, limit: int = 100, db: AsyncSession =
 
 @router.put("/{driver_id}")
 async def update(driver_id: int, data: DriverUpdate, session: AsyncSession = Depends(get_session)):
-    updated = await update_driver_name(session, driver_id, data.name)
+    updated = await update_driver(session, driver_id, data.name, data.category)
 
     if not updated:
         raise HTTPException(404, "Driver not found")

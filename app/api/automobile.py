@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import asc, desc, select, text
+from sqlalchemy import asc, desc, select, text, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.driver import update
 from db.models.automobile import Automobile
 from db.session import get_session
 from schemas.automobile import AutomobileCreate, AutomobileOut, AutomobileUpdate
@@ -16,6 +15,10 @@ from crud.automobile import (
 )
 
 router = APIRouter(prefix="/automobiles", tags=["Automobiles"])
+
+@router.post("/", response_model=AutomobileOut)
+async def create(data: AutomobileCreate, session: AsyncSession = Depends(get_session)):
+    return await create_automobile(session, **data.model_dump())
 
 @router.get("/search")
 async def search_automobiles(pattern: str, db: AsyncSession = Depends(get_session)):
@@ -32,6 +35,8 @@ async def search_automobiles(pattern: str, db: AsyncSession = Depends(get_sessio
 async def get_automobiles(
     sort_by: str = "id",
     order: str = "asc",
+    skip: int = 0,
+    limit: int = 100,
     db: AsyncSession = Depends(get_session),
 ):
     column = getattr(Automobile, sort_by, Automobile.id)
@@ -43,12 +48,10 @@ async def get_automobiles(
     else:
         stmt = stmt.order_by(asc(column))
 
-    result = await db.execute(stmt)
+    result = await db.execute(stmt.offset(skip).limit(limit))
     return result.scalars().all()
 
-@router.post("/", response_model=AutomobileOut)
-async def create(data: AutomobileCreate, session: AsyncSession = Depends(get_session)):
-    return await create_automobile(session, **data.model_dump())
+
 
 @router.get("/", response_model=list[AutomobileOut])
 async def get_all(skip: int = 0, limit: int = 100, session: AsyncSession = Depends(get_session)):
@@ -63,8 +66,8 @@ async def get_by_plate(plate: str, session: AsyncSession = Depends(get_session))
     return auto
 
 @router.get("/id/{id}", response_model=AutomobileOut)
-async def get_by_id(id: int, db: AsyncSession = Depends(get_session)):
-    obj = await get_by_id(db, id=id)
+async def api_get_by_id(id: int, db: AsyncSession = Depends(get_session)):
+    obj = await get_by_id(db, id)
     if not obj:
         raise HTTPException(status_code=404, detail="Automobile not found")
     return obj

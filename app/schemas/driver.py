@@ -13,6 +13,7 @@ class DriverCreate(DriverBase):
 
 class DriverUpdate(BaseModel):
     name: str
+    category: str | None = None
 
 
 class DriverOut(DriverBase):

@@ -27,11 +27,15 @@ async def get_all_drivers(session: AsyncSession, skip: int = 0, limit: int = 100
     return result.scalars().all()
 
 
-async def update_driver_name(session: AsyncSession, driver_id: int, new_name: str) -> bool:
+async def update_driver(session: AsyncSession, driver_id: int, new_name: str, new_category: str | None = None) -> bool:
+    values = {"name": new_name}
+    if new_category is not None:
+        values["category"] = new_category
+
     result = await session.execute(
         update(Driver)
         .where(Driver.id == driver_id)
-        .values(name=new_name)
+        .values(**values)
         .returning(Driver.id))
     
     await session.commit()
