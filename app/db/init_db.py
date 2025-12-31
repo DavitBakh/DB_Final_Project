@@ -15,7 +15,6 @@ PASSWORD = os.getenv("POSTGRES_PASSWORD")
 HOST = os.getenv("POSTGRES_HOST")
 PORT = os.getenv("POSTGRES_PORT")
 
-
 async def create_database():
     admin_url = (f"postgresql+asyncpg://{USER}:{PASSWORD}@{HOST}:{PORT}/postgres")
 
@@ -36,15 +35,8 @@ async def create_database():
     await admin_engine.dispose()
 
 
-async def create_tables():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    print("Таблицы созданы")
-
-
 async def main():
     await create_database()
-    await create_tables()
 
 
 if __name__ == "__main__":
