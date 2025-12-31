@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import asc, desc, select
+from sqlalchemy import asc, desc, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.driver import update
@@ -14,6 +14,17 @@ from crud.automobile import (
 )
 
 router = APIRouter(prefix="/automobiles", tags=["Automobiles"])
+
+@router.get("/search")
+async def search_automobiles(pattern: str, db: AsyncSession = Depends(get_session)):
+    stmt = text("""
+        SELECT *
+        FROM automobiles
+        WHERE meta_data::text ~* :pattern
+    """
+)
+    result = await db.execute(stmt, {"pattern": pattern})
+    return result.mappings().all()
 
 @router.get("/ordered")
 async def get_automobiles(
