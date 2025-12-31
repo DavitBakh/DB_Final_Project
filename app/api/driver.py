@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from db.models.driver import Driver
+from db.models.trip import Trip
 from db.session import get_session
 from schemas.driver import DriverCreate, DriverOut, DriverUpdate
 from crud.driver import (
@@ -31,6 +34,21 @@ async def get_by_id(driver_id: int, session: AsyncSession = Depends(get_session)
     if not driver:
         raise HTTPException(404, "Driver not found")
     return driver
+
+@router.get("/stats/distance-by-driver")
+async def distance_by_driver(db: AsyncSession = Depends(get_session)):
+    stmt = (
+        select(
+            Driver.name,
+            func.sum(Trip.distance).label("total_distance")
+        )
+        .join(Trip, Trip.driver_id == Driver.id)
+        .group_by(Driver.name)
+    )
+
+    result = await db.execute(stmt)
+    return result.mappings().all()
+
 
 
 @router.put("/{driver_id}")

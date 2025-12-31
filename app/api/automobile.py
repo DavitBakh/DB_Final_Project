@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import asc, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.driver import update
+from db.models.automobile import Automobile
 from db.session import get_session
 from schemas.automobile import AutomobileCreate, AutomobileOut, AutomobileUpdate
 from crud.automobile import (
@@ -12,11 +15,32 @@ from crud.automobile import (
 
 router = APIRouter(prefix="/automobiles", tags=["Automobiles"])
 
+@router.get("/ordered")
+async def get_automobiles(
+    sort_by: str = "id",
+    order: str = "asc",
+    db: AsyncSession = Depends(get_session),
+):
+    column = getattr(Automobile, sort_by, Automobile.id)
+
+    stmt = select(Automobile)
+
+    if order == "desc":
+        stmt = stmt.order_by(desc(column))
+    else:
+        stmt = stmt.order_by(asc(column))
+
+    result = await db.execute(stmt)
+    return result.scalars().all()
 
 @router.post("/", response_model=AutomobileOut)
 async def create(data: AutomobileCreate, session: AsyncSession = Depends(get_session)):
     return await create_automobile(session, **data.model_dump())
 
+@router.get("/", response_model=list[AutomobileOut])
+async def get_all(session: AsyncSession = Depends(get_session)):
+    result = await session.execute(select(Automobile))
+    return result.scalars().all()
 
 @router.get("/{plate}", response_model=AutomobileOut)
 async def get_by_plate(plate: str, session: AsyncSession = Depends(get_session)):
@@ -26,9 +50,35 @@ async def get_by_plate(plate: str, session: AsyncSession = Depends(get_session))
         raise HTTPException(404, "Automobile not found")
     return auto
 
+
+
+
 @router.put("/{id}", response_model=AutomobileOut)
 async def api_update_automobile(id: int, obj_in: AutomobileUpdate, db: AsyncSession = Depends(get_session)):
     return await update_automobile(db, id, obj_in)
+
+@router.put("/automobiles/update-consumption")
+async def update_consumption(
+    capacity: float,
+    make: str,
+    db: AsyncSession = Depends(get_session),
+):
+    stmt = (
+        update(Automobile)
+        .where(
+            Automobile.capacity > capacity,
+            Automobile.make == make
+        )
+        .values(
+            fuel_consumption=Automobile.fuel_consumption * 1.1
+        )
+    )
+
+    await db.execute(stmt)
+    await db.commit()
+
+    return {"status": "updated"}
+
 
 
 @router.delete("/{auto_id}")
